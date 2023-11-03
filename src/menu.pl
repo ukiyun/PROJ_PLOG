@@ -12,6 +12,7 @@ print_menu :-
     print('|                 3 - Exit                   |'), nl,
     print('|                                            |'), nl,
     print('|____________________________________________|'), nl.
+    
 
 menu_option(3).
 menu_option(1):- play_menu.
