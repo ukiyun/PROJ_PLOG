@@ -1,7 +1,4 @@
-%% :- consult('game.pl') TEMPORARIO
-:- use_module(library(random)).
-:- use_module(library(lists)).
-:- use_module(library(system)).
+%:- consult('game.pl')
 
 print_menu :-
     nl,nl,nl,
@@ -21,18 +18,18 @@ menu_option(2):- print_how_to_play.
 
 
 print_play_menu:-
-    nl,
-    print(' ============================================== '), nl,
-    print('|                     PLAY                     |'), nl,
-    print('|==============================================|'), nl,
-    print('|                                              |'), nl,
-    print('|            1 - Player vs Player              |'), nl,
-    print('|            2 - Player vs BOT                 |'), nl,
-    print('|            3 - BOT vs BOT                    |'), nl,
-    print('|            4 - BOT vs Player                 |'), nl,
-    print('|            5 - Back                          |'), nl,
-    print('|                                              |'), nl,
-    print('|______________________________________________|'), nl.
+    nl,nl,nl,
+    print(' ============================================ '), nl,
+    print('|                    PLAY                    |'), nl,
+    print('|============================================|'), nl,
+    print('|                                            |'), nl,
+    print('|           1 - Player vs Player             |'), nl,
+    print('|           2 - Player vs BOT                |'), nl,
+    print('|           3 - BOT vs BOT                   |'), nl,
+    print('|           4 - BOT vs Player                |'), nl,
+    print('|           5 - Back                         |'), nl,
+    print('|                                            |'), nl,
+    print('|____________________________________________|'), nl.
 
 play_option(5) :- play.
 play_option(1) :- start_game(1).
@@ -42,23 +39,23 @@ play_option(4) :- start_game_4(1).
 
 
 print_bot_menu:-
-    nl,
-    print(' ============================================== '), nl,
-    print('|                     BOT                      |'), nl,
-    print('|==============================================|'), nl,
-    print('|                                              |'), nl,
-    print('|               1 - Level 1                    |'), nl,
-    print('|               2 - Level 2                    |'), nl,
-    print('|               4 - Back                       |'), nl,
-    print('|                                              |'), nl,
-    print('|______________________________________________|'), nl.
+    nl,nl,nl,
+    print(' ============================================ '), nl,
+    print('|                     BOT                    |'), nl,
+    print('|============================================|'), nl,
+    print('|                                            |'), nl,
+    print('|               1 - Level 1                  |'), nl,
+    print('|               2 - Level 2                  |'), nl,
+    print('|               4 - Back                     |'), nl,
+    print('|                                            |'), nl,
+    print('|____________________________________________|'), nl.
 
 ai_option(3) :- play_menu.
 ai_option(1) :- start_game(1).
 ai_option(2) :- start_game(2).
 
 print_how_to_play:-
-    nl,
+    nl,nl,nl,
     print(' ============================================ '), nl,
     print('|                 HOW TO PLAY                |'), nl,
     print('|============================================|'), nl,
