@@ -1,4 +1,5 @@
 %:- consult('game.pl')
+:- consult('display.pl').
 
 print_menu :-
     nl,nl,nl,

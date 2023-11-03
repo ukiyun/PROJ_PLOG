@@ -11,14 +11,14 @@
 
 % 0 -> first level, 1 -> second level, 2 -> third level, 3 -> fourth level
 
-initialBoard(8, [
-                [clear,clear,b,clear,clear,b,clear,clear],
-                [clear,clear,clear,clear,clear,clear,clear,clear],
-                [clear,clear,clear,clear,clear,clear,clear,clear],
-                [clear,clear,clear,clear,clear,clear,clear,clear],
-                [clear,clear,clear,clear,clear,clear,clear,clear],
-                [clear,clear,clear,clear,clear,clear,clear,clear],
-                [clear,clear,clear,clear,clear,clear,clear,clear],
-                [clear,clear,r,clear,clear,r,clear,clear]
-                ])
+initialBoard([
+            [clear,clear,b,clear,clear,b,clear,clear],
+            [clear,clear,clear,clear,clear,clear,clear,clear],
+            [clear,clear,clear,clear,clear,clear,clear,clear],
+            [clear,clear,clear,clear,clear,clear,clear,clear],
+            [clear,clear,clear,clear,clear,clear,clear,clear],
+            [clear,clear,clear,clear,clear,clear,clear,clear],
+            [clear,clear,clear,clear,clear,clear,clear,clear],
+            [clear,clear,r,clear,clear,r,clear,clear]
+            ]).
 
