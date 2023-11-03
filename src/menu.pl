@@ -1,5 +1,6 @@
 %:- consult('game.pl')
 :- consult('display.pl').
+:- consult('moves.pl').
 
 print_menu :-
     nl,nl,nl,
@@ -11,7 +12,9 @@ print_menu :-
     print('|                 2 - How to play            |'), nl,
     print('|                 3 - Exit                   |'), nl,
     print('|                                            |'), nl,
-    print('|____________________________________________|'), nl.
+    print('|____________________________________________|'), nl,
+    initialBoard(Board),
+    sum_coords(Player, Board).
     
 
 menu_option(3).
@@ -64,7 +67,7 @@ print_how_to_play:-
     print('|                                            |'), nl,
     print('|  Each player has 2 pawns and 16 path tiles |'), nl,
     print('|                                            |'), nl,
-    print('|  Each of the 16 path tiles are unique      |'), nl,
+    print('|  Each of the 12 path tiles are unique      |'), nl,
     print('|                                            |'), nl,
     print('|  Chose a path tile that, after use, is     |'), nl,
     print('| discarded                                  |'), nl,

@@ -8,6 +8,10 @@ write_char(b) :- write(' B ').
 write_char(r) :- write(' R ').
 write_char(division) :- write('|').
 
+player_piece(' R ', 1).
+player_piece(' B ',2).
+
+
 
 % Predicate to display the board.
 display_board(Board) :- nl,nl,nl,
@@ -27,6 +31,9 @@ print_row([]).
 print_row([Cell|Rest]) :-
     write_char(Cell), write_char(division),
     print_row(Rest).
+
+
+% ======================================================= %
 
 
 % Displaying the cards with specific paths

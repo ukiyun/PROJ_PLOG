@@ -14,6 +14,8 @@ choosePlayer(PlayerOne, PlayerTwo, FirstToPlay):-
 % Change players turns
 % changeTurn(+CurrPlayer, -NextPlayer)
 
+
+
 changeTurn(CurrPlayer, NextPlayer):-
     (
     CurrentPlayer =:= 1 
