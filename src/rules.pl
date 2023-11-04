@@ -1,6 +1,7 @@
 :- use_module(library(random)).
 :- use_module(library(lists)).
 :- consult('board.pl').
+:- consult('pointSystem.pl').
 
 % Choose a random player to start
 % PlayerOne is 1 and PlayerTwo is 3 (because the upperbound is not included in the interval)
@@ -20,7 +21,7 @@ changeTurn(CurrPlayer, NextPlayer):-
     (
     CurrentPlayer =:= 1 
     -> NextPlayer = 2
-    ; NextPlayer = 1
+    ; NextPlayer = 1, incrementTurn(turns, X)
     ).
 
 % ======================================================= %

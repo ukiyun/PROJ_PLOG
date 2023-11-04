@@ -171,8 +171,8 @@ get_direction(Board, NewBoard, Player) :-
 
 move_piece(Board, Column, Row, InputColumn, InputRow, NewBoard) :-
     (
-        Row =:= InputRow ->
+        Row == InputRow ->
         (
-            Column =:= InputColumn ->
+            Column == InputColumn ->
                 moveHorizontal(Board, Column, Row, InputColumn, NewBoard));
                     moveVertical(Board, Column, Row, InputRow, NewBoard)).
