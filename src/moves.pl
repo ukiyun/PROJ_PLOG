@@ -2,7 +2,6 @@
 :- use_module(library(lists)).
 :- use_module(library(random)).
 :- use_module(library(between)).
-:- use_module(library(ansi_term)).
 
 :- consult('rules.pl').
 :- consult('display.pl').
@@ -12,7 +11,7 @@
 % list of the cards and their paths
 
 %red cards
-cards(
+cards([
     [1, [[4,2], [4,-2], [-4,2], [-4,-2], [2,4], [2,-4], [-2,4], [-2,-4]]],
     [2, [[3,0], [-3,0], [0,3], [0,-3]]],
     [3, [[3,-1], [3,1], [-3,-1], [-3,1], [1,3], [1,-3], [-1,3], [-1,-3]]],
@@ -24,11 +23,11 @@ cards(
     [9, [[2,1], [2,-1], [-2,1], [-2,-1], [1,2], [1,-2], [-1,2], [-1,-2]]],
     [10, [[2,2], [-2,2], [-2,-2], [2,-2]]],
     [11, [[2,3], [-2,3], [-3,2], [2,-3], [-2,-3], [3,-2], [-3,-2], [3,2]]],
-    [12, [[1,1], [-1,1], [-1,-1], [1,-1]]
+    [12, [[1,1], [-1,1], [-1,-1], [1,-1]]]
     ], 1).
 
 %blue cards
-cards(
+cards([
     [1, [[4,2], [4,-2], [-4,2], [-4,-2], [2,4], [2,-4], [-2,4], [-2,-4]]],
     [2, [[3,0], [-3,0], [0,3], [0,-3]]],
     [3, [[3,-1], [3,1], [-3,-1], [-3,1], [1,3], [1,-3], [-1,3], [-1,-3]]],
@@ -40,7 +39,7 @@ cards(
     [9, [[2,1], [2,-1], [-2,1], [-2,-1], [1,2], [1,-2], [-1,2], [-1,-2]]],
     [10, [[2,2], [-2,2], [-2,-2], [2,-2]]],
     [11, [[2,3], [-2,3], [-3,2], [2,-3], [-2,-3], [3,-2], [-3,-2], [3,2]]],
-    [12, [[1,1], [-1,1], [-1,-1], [1,-1]]
+    [12, [[1,1], [-1,1], [-1,-1], [1,-1]]]
     ], 2).
 
 % ======================================================= %
@@ -70,15 +69,14 @@ replace([H|T], I, X, [H|R]) :-
 remove_piece(Board, Row, Col, NewBoard) :-
     nth1(Row, Board, BoardRow),     % Select the row using nth1/3
     replace(BoardRow, Col, '    ', NewRow), % Replace the element in the row using replace/4
-    replace(Board, Row, NewRow, NewBoard). % Replace the row in the board using replace/4 
-
+    replace(Board, Row, NewRow, NewBoard). % Replace the row in the board using replace/4     
 
 % Predicate to calculate the sum of the coordinates 
 sum_coords(Player,Board) :-
     display_board(Board),
     cards(Cards,Player),
-    start_coordinates(StartRow, StartCol),
-    write('Give me a card: '),
+    check_starting_position(Board, StartCol, StartRow, Player),
+    write('choose a card to use: '),
     read(Id),nl,
     get_card_by_id(Id, Cards, Card),
     write(Card),nl,
@@ -131,18 +129,18 @@ sum_coords_aux([[X, Y] | Tail], StartRow, StartCol) :-
 
 check_starting_position(Board, Column, Row, Player) :-
     write('Choose a piece to move: '),
-    write('Column:\n'),
+    write('\nColumn: '),
     checkColumn(ValidColumn, InputColumn),
-    write('Row:\n'),
+    write('\nRow:'),
     checkRow(ValidRow, InputRow),
 
-    nth1(InputRow, Board, RowList),
-    nth1(InputColumn, RowList, Piece),
+    nth0(InputRow, Board, RowList),
+    nth0(InputColumn, RowList, Piece),
     (
         Piece == Player
     -> ValidRow = Row,
        ValidColumn = Column, !, true
-    ;  write('Invalid piece!\n'),
+    ;  write('\nInvalid piece!\n'),
        check_starting_position(Board, Column, Row, Player)
      ).
 
