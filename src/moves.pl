@@ -71,19 +71,67 @@ remove_piece(Board, Row, Col, NewBoard) :-
     replace(BoardRow, Col, '    ', NewRow), % Replace the element in the row using replace/4
     replace(Board, Row, NewRow, NewBoard). % Replace the row in the board using replace/4     
 
+% ======================================================= %
+
+% Predicate to show cards and take away the one that the player chooses
+
+
+draw_card(Player, [Card | CardsLeft], RemainingCards, Card) :-      % ainda não testei para ver se funciona
+    PlayerDeck = [Card | CardsLeft],
+    RemainingCards = CardsLeft.
+
+display_card_numbers(Cards) :-
+    sleep(0.8),
+    write('Your Cards: '),
+    display_card_numbers_aux(Cards).
+
+display_card_numbers_aux([]) :- nl.
+display_card_numbers_aux([[Number, _] | Rest]) :-
+    display_card(Number),
+    sleep(0.4),
+    display_card_numbers_aux(Rest).
+
+
+% ======================================================= %
 % Predicate to calculate the sum of the coordinates 
 sum_coords(Player,Board) :-
     display_board(Board),
     cards(Cards,Player),
     check_starting_position(Board, StartCol, StartRow, Player),
-    write('choose a card to use: '),
+
+    /*  
+        por alguma razão o StartRow e o StartCol estão a ser lidos como  _4427 e _4425
+        pode ser por causa do check_starting_position ou mesmo do checkRow e checkColumn
+        
+        
+        "StartCol, and StartRow are not instantiated or used further in your code, which may be why 
+        they appear as don't care variables (prefixed with underscores). 
+        It's a way for Prolog to indicate that these variables are not being used for any purpose.
+        If you intend to use these variables, make sure they are properly instantiated 
+        within the predicates and that their values are used. 
+        If you don't intend to use them, you can safely ignore the presence of the underscores."
+    
+
+    */
+    
+    display_card_numbers(Cards),
+
+
+    write('Choose a card to use: \n'),
     read(Id),nl,
+
     get_card_by_id(Id, Cards, Card),
-    write(Card),nl,
+    write('That Cards Possible Moves:'),nl,
+    nl, write(Card),nl,
+
+    /*  Escreveste isto por alguma razão?
     write(StartRow),nl,
     write(StartCol),nl,
-    write('Final coords can be:'),nl,
-    sum_coords_aux(Card, StartRow, StartCol),
+    */
+
+    nl, write('Final coords can be:'), nl,
+    nl, sum_coords_aux(Card, StartRow, StartCol), nl,
+
     write('Give me a option to rotate:'),read(Number),nl,
     get_card_by_number(Number, Card, CardId),
     write(CardId),
@@ -115,9 +163,11 @@ get_card_by_id(Id, [_ | Tail], Coords) :-
     get_card_by_id(Id, Tail, Coords).
 
 
+% NÃO ESTÁ A FUNCIONAR ALGUM ERRO NO SUM COORDS DE ARITMETICA
+%
 sum_coords_aux([], _, _).
 sum_coords_aux([[X, Y] | Tail], StartRow, StartCol) :-
-    NewSUmX is StartRow + X,
+    NewSumX is StartRow + X,
     NewSumY is StartCol + Y,
     write(NewSumX), write(' '), write(NewSumY),nl,
     sum_coords_aux(Tail, StartRow, StartCol).
@@ -127,50 +177,38 @@ sum_coords_aux([[X, Y] | Tail], StartRow, StartCol) :-
 
 % check the starting position of the piece
 
+% WORKING LETS FUCKING GOOOOOOOO
 check_starting_position(Board, Column, Row, Player) :-
-    write('Choose a piece to move: '),
+    nl, write('Choose a piece to move: '),nl,
     write('\nColumn: '),
     checkColumn(ValidColumn, InputColumn),
-    write('\nRow:'),
+    write('\nRow: '),
     checkRow(ValidRow, InputRow),
-
-    nth0(InputRow, Board, RowList),
-    nth0(InputColumn, RowList, Piece),
+    nth1(InputRow, Board, RowList),
+    nth1(InputColumn, RowList, Piece),
+    % convert the user input to
     (
-        Piece == Player
-    -> ValidRow = Row,
-       ValidColumn = Column, !, true
-    ;  write('\nInvalid piece!\n'),
-       check_starting_position(Board, Column, Row, Player)
-     ).
+        (Piece == 'r' ; Piece == 'b') ->
+        (
+            (Piece == 'r'->
+                Pieces = 1
+            ;   Pieces = 2),
 
-% ======================================================= %
-
-% get the direction of the move
-
-get_direction(Board, NewBoard, Player) :-
-    check_starting_position(Board, Column, Row, Player),
-    write('Choose a direction in which to move: '),
-    write('Column:\n'),
-    checkColumn(ValidColumn, InputColumn),
-    write('Row:\n'),
-    checkRow(ValidRow, InputRow),
-    checkMove(Board, Column, Row, InputColumn, InputRow, IsValid),
-    (
-        IsValid == 1
-    -> move_piece(Board, Column, Row, InputColumn, InputRow, NewBoard)
-    ;  write("That move doesn't follow the rules!\n"), !, get_direction(Board, NewBoard, Player)
+            (Pieces == Player)->
+            (
+                /* ValidRow = Row,
+                ValidColumn = Column,*/         % Declarações que estavam a turnar a Col e Row em booleans 
+                write('\nYour turn to make a move!\n'), nl
+            )
+            ;
+            write('\nNot your piece! That piece belongs to the other player!\n'),
+            write('\nTry again!\n'),
+            check_starting_position(Board, Column, Row, Player)
+        )
+        ;
+        write('\nNo piece in that position!\n'),
+        check_starting_position(Board, Column, Row, Player)
     ).
 
 
 % ======================================================= %
-
-% move the piece
-
-move_piece(Board, Column, Row, InputColumn, InputRow, NewBoard) :-
-    (
-        Row == InputRow ->
-        (
-            Column == InputColumn ->
-                moveHorizontal(Board, Column, Row, InputColumn, NewBoard));
-                    moveVertical(Board, Column, Row, InputRow, NewBoard)).

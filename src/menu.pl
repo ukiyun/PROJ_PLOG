@@ -13,14 +13,19 @@ print_menu :-
     print('|                 3 - Exit                   |'), nl,
     print('|                                            |'), nl,
     print('|____________________________________________|'), nl,
-    initialBoard(Board),
-    sum_coords(Player, Board).
-    
+    print('                                              '), nl.
 
-menu_option(3).
+/*    initialBoard(Board),                      % commented out, to stop printing the board every time the menu is printed
+    sum_coords(Player, Board).
+  */  
+
+menu_option(3):- print_exit.
 menu_option(1):- play_menu.
 menu_option(2):- print_how_to_play.
 
+
+
+% qual é a diferença entre o player vs bot e o bot vs player?
 
 print_play_menu:-
     nl,nl,nl,
@@ -34,7 +39,8 @@ print_play_menu:-
     print('|           4 - BOT vs Player                |'), nl,
     print('|           5 - Back                         |'), nl,
     print('|                                            |'), nl,
-    print('|____________________________________________|'), nl.
+    print('|____________________________________________|'), nl,
+    print('                                              '), nl.
 
 play_option(5) :- play.
 play_option(1) :- start_game(1).
@@ -53,9 +59,10 @@ print_bot_menu:-
     print('|               2 - Level 2                  |'), nl,
     print('|               4 - Back                     |'), nl,
     print('|                                            |'), nl,
-    print('|____________________________________________|'), nl.
+    print('|____________________________________________|'), nl,
+    print('                                              '), nl.
 
-ai_option(3) :- play_menu.
+ai_option(4) :- play_menu.
 ai_option(1) :- start_game(1).
 ai_option(2) :- start_game(2).
 
@@ -76,11 +83,33 @@ print_how_to_play:-
     print('| outside the board, and if you cant move    |'), nl,
     print('| at all, your pawn is moved to the lowest   |'), nl,
     print('| level corner                               |'), nl,
+    print('|                                            |'), nl,
+    print('|                                            |'), nl,
+    print('|                                            |'), nl,
+    print('|         1 - Play          3 - Exit         |'), nl,
     print('|____________________________________________|'), nl,
-    print_menu,
-    read(Input),
-    menu_option(Input).
+    print('                                              '), nl,
+   % print_menu,                      % commented out, to stop printing the menu every time the how to play is printed
+    read(Input),                                            
+    menu_option(Input).                                     
+                                                            
+                                                               
+print_exit:-                                                 
+    nl,nl,nl,                                                                           
+    print(' ============================================ '), nl,
+    print('|                    EXIT                    |'), nl,
+    print('|============================================|'), nl,
+    print('|                                            |'), nl,
+    print('|             HOPE YOU HAD FUN!              |'), nl,
+    print('|                                            |'), nl,
+    print('|                  Goodbye!                  |'), nl,
+    print('|____________________________________________|'), nl,
+    print('                                              '), nl,
 
+    sleep(2),
+    halt.
+
+    
 
 play :-
     print_menu,
@@ -96,3 +125,12 @@ bot_menu :-
     print_bot_menu,
     read(Input),
     ai_option(Input).
+
+start_game(1) :-
+    initialBoard(Board),
+    sum_coords(Player, Board).
+
+start_game_4(1) :-
+    bot_menu.
+
+

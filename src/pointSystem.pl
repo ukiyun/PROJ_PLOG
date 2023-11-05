@@ -17,18 +17,21 @@
     [0, 25, 25,  25,  25, 25, 25, 0],
     [0,  0,  0,   0,   0,  0,  0, 0]
 
-
+*/
 
 :- consult('rules.pl').
 :- consult('display.pl').
 
-
+/*
 % ======================================================= %
 % ==================== INITIALIZE LISTS ================= %
 turns([]).
 
 PointsListBlue([]).
 PointsListRed([]).
+
+isValid(true).
+isValid(false).
 
 % ======================================================= %
 
@@ -37,7 +40,7 @@ PointsListRed([]).
 incrementTurn(turns, X) :-
     last(turns, Last),
     X is Last + 1.
-    append(turns, X, new_turns),
+    append(turns, [X], new_turns),
     last(new_turns, CurrentTurn),
     FirstRow is 1,
     FirstColumn is 1,
@@ -73,33 +76,38 @@ boardCheck(Board, I, J, Occupation) :-
     nth0(J, Row, Occupation).
 
 
-iterateBoard(Board, I, J, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue) :-
-    checkRow(isValid, I),
-    (
+iterateBoard(_, 9, _, PointsListRed, PointsListRed, PointsListBlue, PointsListBlue).  % Base case when we've reached beyond the board
+
+iterateBoard(Board, I, J, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue) :-
+checkRow(isValid, I),
+(
         isValid == true
-        ->  write("Iterating through board"),
+        ->  
         checkColumn(isValid, J),
         (
-            isValid == true
-            ->  boardCheck(Board, I, J, Occupation),
+                isValid == true
+                ->  
+                boardCheck(Board, I, J, Occupation),
                 (
-                    Occupation == 1        % 1 is red
-                    -> checkPositionPoints(I, J, Points), append(PointsListRed, Points, NewPointsListRed), 
-                    ; Occupation == 2      % 2 is blue
-                    -> checkPositionPoints(I, J, Points), append(PointsListBlue, Points, NewPointsListBlue),
-                    ; Occupation == clear      % clear is empty
-                    -> write("Empty space")
-                ),
-                J1 is J + 1,
-                iterateBoard(Board, I, J, Occupation, NewPointsListRed, NewerPointsListRed, NewPointsListBlue, NewerPointsListBlue)
-            ;   I1 is I + 1,
+                        Occupation == 1        % 1 is red
+                        -> checkPositionPoints(I, J, Points), append(PointsListRed, [Points], TempList),
+                        J1 is J + 1,
+                        iterateBoard(Board, I, J1, TempList, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+                        ; Occupation == 2      % 2 is blue
+                        -> checkPositionPoints(I, J, Points), append(PointsListBlue, [Points], TempList),
+                        J1 is J + 1,
+                        iterateBoard(Board, I, J1, PointsListRed, NewPointsListRed, TempList, NewPointsListBlue)
+                        ; Occupation == clear  % clear is empty
+                        -> J1 is J + 1,
+                        iterateBoard(Board, I, J1, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+                )
+                ;   I1 is I + 1,
                 J1 is 1,
-                iterateBoard(Board, I, J, Occupation, NewPointsListRed, NewerPointsListRed, NewPointsListBlue, NewerPointsListBlue)
-        
-        ),
+                iterateBoard(Board, I1, J1, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+        )
         ;   write("Finished iterating through board")
+).
 
-    ).
 
 % ======================================================= %
 

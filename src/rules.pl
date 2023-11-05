@@ -1,7 +1,7 @@
 :- use_module(library(random)).
 :- use_module(library(lists)).
 :- consult('board.pl').
-:- consult('pointSystem.pl').
+
 
 % Choose a random player to start
 % PlayerOne is 1 and PlayerTwo is 3 (because the upperbound is not included in the interval)
@@ -59,6 +59,7 @@ checkColumn(IsValid, Column):-
     -> IsValid = 'True', Column = Number, !, true
     ; write('Invalid Column\n'), nl, IsValid = 'False'
     ).
+
 
 % ======================================================= %
 
@@ -283,3 +284,159 @@ checkMove(Board, InitialColumn, InitialRow, FinalColumn, FinalRow, IsValid):-
         ;   IsValid = 'False', !
         )
     ).
+
+
+
+
+
+
+% ======================================================= %
+% ==================== INITIALIZE LISTS ================= %
+turns =[].
+
+PointsListBlue = [].
+PointsListRed = [].
+
+isValid(true).
+isValid(false).
+
+% ======================================================= %
+
+% ===================== TURNS ========================= %
+
+incrementTurn(turns, X) :-
+    last(turns, Last),
+    X is Last + 1,
+    append(turns, [X], new_turns),
+    last(new_turns, CurrentTurn),
+    FirstRow is 1,
+    FirstColumn is 1,
+    (
+        CurrentTurn =:= 4
+        ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+        ;  CurrentTurn =:= 8
+        ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+        ;  CurrentTurn =:= 12
+        ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+        ;  CurrentTurn =:= 16
+        ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue),
+            total_score(NewPointsListRed, NewPointsListBlue, ScoreRed, ScoreBlue),
+            write("Red Score: "), write(ScoreRed), nl,
+            write("Blue Score: "), write(ScoreBlue), nl,
+            (
+                ScoreRed > ScoreBlue
+                ->  write("Red Wins!"), nl
+                ; ScoreBlue > ScoreRed
+                ->  write("Blue Wins!"), nl
+                ; ScoreRed == ScoreBlue
+                ->  write("It's a tie!"), nl
+            )
+    ).
+
+
+% ======================================================= %
+
+% ===================== BOARD ITERATION ========================= %
+
+
+boardCheck(Board, I, J, Occupation) :-
+    nth0(I, Board, Row),
+    nth0(J, Row, Occupation).
+
+
+iterateBoard(_, 9, _, PointsListRed, PointsListRed, PointsListBlue, PointsListBlue).  % Base case when we've reached beyond the board
+
+iterateBoard(Board, I, J, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue) :-
+checkRow(isValid, I),
+(
+        isValid == true
+        ->  
+        checkColumn(isValid, J),
+        (
+                isValid == true
+                ->  
+                boardCheck(Board, I, J, Occupation),
+                (
+                        Occupation == 1        % 1 is red
+                        -> checkPositionPoints(I, J, Points), append(PointsListRed, [Points], TempList),
+                        J1 is J + 1,
+                        iterateBoard(Board, I, J1, TempList, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+                        ; Occupation == 2      % 2 is blue
+                        -> checkPositionPoints(I, J, Points), append(PointsListBlue, [Points], TempList),
+                        J1 is J + 1,
+                        iterateBoard(Board, I, J1, PointsListRed, NewPointsListRed, TempList, NewPointsListBlue)
+                        ; Occupation == clear  % clear is empty
+                        -> J1 is J + 1,
+                        iterateBoard(Board, I, J1, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+                )
+                ;   I1 is I + 1,
+                J1 is 1,
+                iterateBoard(Board, I1, J1, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+        )
+        ;   write("Finished iterating through board")
+).
+
+
+% ======================================================= %
+
+
+% ===================== POINTS ========================= %
+
+checkPositionPoints(Row, Column, Points) :-
+    (
+        Row == 1 -> Points = 0
+        ; Row == 2 -> (
+            Column == 1 -> Points = 0
+            ; Column == 8 -> Points = 0
+            ; Points = 25
+        )
+        ; Row == 3 -> (
+            Column == 1 -> Points = 0
+            ; Column == 8 -> Points = 0
+            ; Column == 2 -> Points = 25
+            ; Column == 7 -> Points = 25
+            ; Points = 50
+        )
+        ; Row == 4 -> (
+            Column == 1 -> Points = 0
+            ; Column == 8 -> Points = 0
+            ; Column == 2 -> Points = 25
+            ; Column == 7 -> Points = 25
+            ; Column == 3 -> Points = 50
+            ; Column == 6 -> Points = 50
+            ; Points = 100
+        )
+        ; Row == 5 -> (
+            Column == 1 -> Points = 0
+            ; Column == 8 -> Points = 0
+            ; Column == 2 -> Points = 25
+            ; Column == 7 -> Points = 25
+            ; Column == 3 -> Points = 50
+            ; Column == 6 -> Points = 50
+            ; Points = 100
+        )
+        ; Row == 6 -> (
+            Column == 1 -> Points = 0
+            ; Column == 8 -> Points = 0
+            ; Column == 2 -> Points = 25
+            ; Column == 7 -> Points = 25
+            ; Points = 50
+        )
+        ; Row == 7 -> (
+            Column == 1 -> Points = 0
+            ; Column == 8 -> Points = 0
+            ; Points = 25
+        )
+        ; Row == 8 -> Points = 0
+    ).
+
+
+% ======================================================= %
+
+% ===================== TOTAL SCORE ========================= %
+
+total_score(PointsListRed, PointsListBlue, ScoreRed, ScoreBlue):-
+    sum_list(PointsListRed, ScoreRed),
+    sum_list(PointsListBlue, ScoreBlue).
+
+% ======================================================= %
