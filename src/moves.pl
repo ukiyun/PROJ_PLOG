@@ -6,6 +6,8 @@
 :- consult('rules.pl').
 :- consult('display.pl').
 
+:- dynamic list_indexes/1.
+
 % ======================================================= %
 
 % list of the cards and their paths
@@ -54,7 +56,7 @@ select_piece(Board, Row, Col, Piece) :-
 
 % Predicate to change the value of a cell at a specific row and column in the board.
 change_cell(Board, Row, Col, NewValue, NewBoard) :-
-    nth1(Row, Board, OldRow),        % Select the row using nth1/3
+    nth1(Row, Board, OldRow),            % Select the row using nth1/3
     replace(OldRow, Col, NewValue, ModifiedRow),  % Replace the element in the row using replace/4
     replace(Board, Row, ModifiedRow, NewBoard).  % Replace the row in the board using replace/4
 
@@ -69,8 +71,8 @@ replace([H|T], I, X, [H|R]) :-
 % Predicate to remove a piece at a specific row and column on the board
 remove_piece(Board, Row, Col, NewBoard) :-
     nth1(Row, Board, BoardRow),     % Select the row using nth1/3
-    replace(BoardRow, Col, '    ', NewRow), % Replace the element in the row using replace/4
-    replace(Board, Row, NewRow, NewBoard). % Replace the row in the board using replace/4     
+    replace(BoardRow, Col, empty, NewRow), % Replace the element in the row using replace/4
+    replace(Board, Row, NewRow, NewBoard). % Replace the row in the board using replace/4    
 
 % ======================================================= %
 
@@ -101,37 +103,51 @@ sum_coords(Player,Board) :-
     check_starting_position(Board, Column, Row, Player, ReturnRow, ReturnColumn),
     
     display_card_numbers(Cards),
-
-
     write('Choose a card to use: \n'),
     read(Id),nl,
 
-    get_card_by_id(Id, Cards, Card), 
+    (is_valid_card_number(Id, Cards) ->
+        true
+    ;
+        write('Invalid card number. Please select a valid card.\n'),
+        sleep(3),
+        sum_coords(Player, Board) % Retry the turn
+    ), 
+    % what if user does not want to use that card?
 
-    nl, write('Final coords can be:'), nl,
-    nl, sum_coords_aux(Card, ReturnRow, ReturnCol), nl,
+    get_card_by_id(Id, Cards, Card),
+    write('That Cards Possible Moves:'),nl,
+    nl, write(Card),nl,
+
+    nl, write('Final coords can be:'), nl,nl,
+    write(' Row   |   Col'),nl,
+
+    initialize_indexes,
+    sum_coords_aux(Card, ReturnRow, ReturnColumn, List), nl,
+    list_indexes(List),
+    reverse(List, FinalList), nl,
+
+
+    write('Select the desired coordinates: '), read(Number),nl,
+   
+    nth1(Number, FinalList, FinalCoords),
+    write(FinalCoords),nl,
+    [FinalRow, FinalColumn] = FinalCoords,
+
+
+    % (Valid_move(...) -> alterar a lista
 
     remove_card(Id, Cards, RemainingCards),
-
-    write('Select the desired coordinates: '),read(Number),nl,
-    get_card_by_number(Number, Card, CardId),
-    write(CardId),
-    [X,Y] = CardId,
-    FinalRow is StartRow + X,
-    FinalCol is StartCol + Y,
-    write(FinalRow),nl,
-    write(FinalCol),nl,
-     
-    % (Valid_move(...) -> alterar a lista (retirar a Card) ;  sum_coords(Id,Player)),
     
     player_piece(Piece,Player),
 
-    remove_piece(Board, StartRow, StartCol, TempBoard),
-    change_cell(TempBoard, FinalRow, FinalCol, Piece, NewBoard),
+    write(FinalRow),nl,
+    write(FinalColumn),nl,
 
-    nl,nl,nl,nl,nl,
+    remove_piece(Board, ReturnRow, ReturnColumn, TempBoard),
+    change_cell(TempBoard, FinalRow, FinalColumn, Piece, NewBoard),
 
-    remove_card(Id, Cards, RemainingCards),
+    nl,nl,nl,
 
     (Player = 1 -> NextPlayer = 2 ; NextPlayer = 1),
     sum_coords(NextPlayer,NewBoard).
@@ -150,25 +166,34 @@ remove_card(CardId, Cards, RemainingCards) :-
     select([CardId, _], Cards, RemainingCards).
 
 
-% Já funciona
-%
-sum_coords_aux([], _, _).
-sum_coords_aux([[X, Y] | Tail], StartRow, StartCol) :-
+sum_coords_aux([], _, _,_).
+sum_coords_aux([[X, Y] | Tail], StartRow, StartCol, Indexs) :-
     NewSumX is StartRow + X,
     NewSumY is StartCol + Y,
-    write(NewSumX), write(' '), write(NewSumY),nl,
-    sum_coords_aux(Tail, StartRow, StartCol).
-    
-    % a cena de dar print as cartas no sicstus ainda nao funcemina
-    % como assim? Como é que eu dou run neste código? mas tipo os ficheiros nao estao guardados no meu pc
-    % da run ao codigo no sisctus, dá push no git e eu assim faço run
-    % escolhe o menu.pl e mete play. OKAPA
+    (
+        (NewSumX > 0, NewSumX =< 8, NewSumY > 0, NewSumY =< 8)
+    ->  write('    [ '), write(NewSumX), write(', '), write(NewSumY), write(']'),nl,
+        Coordinates = [NewSumX,NewSumY],
+        add_to_list(Coordinates)
+    ;   true 
+    ),
+    sum_coords_aux(Tail, StartRow, StartCol, ValidIndexes).
+
+
+% ======================================================= %
+
+initialize_indexes :-
+    assert(list_indexes([])).
+
+add_to_list(X) :-
+    retract(list_indexes(List)),
+    assert(list_indexes([X | List])).
+
 
 % ======================================================= %
 
 % check the starting position of the piece
 
-% WORKING LETS FUCKING GOOOOOOOO
 check_starting_position(Board, Column, Row, Player, ReturnRow, ReturnColumn) :-
     nl, write('Choose a piece to move: '),nl,
     write('\nColumn: '),
@@ -205,5 +230,10 @@ check_starting_position(Board, Column, Row, Player, ReturnRow, ReturnColumn) :-
 
 
 % ======================================================= %
+
+% check if the card number is valid
+
+is_valid_card_number(Id, Cards) :-
+    member([Id, _], Cards).
 
 % ======================================================= %

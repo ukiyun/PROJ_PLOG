@@ -2,13 +2,13 @@
 % r - red pawns
 
 initialBoard([
-            [clear,clear,b,clear,clear,b,clear,clear],
-            [clear,clear,clear,clear,clear,clear,clear,clear],
-            [clear,clear,clear,clear,clear,clear,clear,clear],
-            [clear,clear,clear,clear,clear,clear,clear,clear],
-            [clear,clear,clear,clear,clear,clear,clear,clear],
-            [clear,clear,clear,clear,clear,clear,clear,clear],
-            [clear,clear,clear,clear,clear,clear,clear,clear],
-            [clear,clear,r,clear,clear,r,clear,clear]
+            [empty,empty,b,empty,empty,b,empty,empty],
+            [empty,empty,empty,empty,empty,empty,empty,empty],
+            [empty,empty,empty,empty,empty,empty,empty,empty],
+            [empty,empty,empty,empty,empty,empty,empty,empty],
+            [empty,empty,empty,empty,empty,empty,empty,empty],
+            [empty,empty,empty,empty,empty,empty,empty,empty],
+            [empty,empty,empty,empty,empty,empty,empty,empty],
+            [empty,empty,r,empty,empty,r,empty,empty]
             ]).
 

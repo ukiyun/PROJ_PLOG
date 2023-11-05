@@ -88,16 +88,11 @@ getColumn(Board, ColumnNum, FinalColumn):-
 % ======================================================= %
 
 % Verify is there is a piece on the desired position
-% checkDestinationPiece(+Coordinate, +Destination, -IsValid)
+% checkDestinationPiece(+NewRow, +NewColumn, -IsValid)
 
-checkDestinationPiece(Coordinate, Destination, IsValid):-
-    nth1(Destination, Coordinate, Piece),
-    (
-
-        Destination == clear
-        -> IsValid = 'False', !
-        ; IsValid = 'True', !
-    ).
+/*checkDestinationPiece(NewRow, NewColumn, 'True') :-
+    NewRow > 0, NewRow =< 8, NewColumn > 0, NewColumn =< 8.
+checkDestinationPiece(_, _, 'False').*/
 
 % ======================================================= %
 
@@ -180,7 +175,7 @@ checkPath(RowOrColumn, Origin, Destination, CheckInFront, IsValid):-
     (
         IsValid == 'True'
     ->  isValid = 'True', !
-    ;   isValid = 'False', !
+    ;   isValid = 'False'
     ).
 
 % ======================================================= %

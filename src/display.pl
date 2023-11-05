@@ -3,14 +3,19 @@
 
 % display pieces on the board
 
-write_char(clear) :- write('   ').
+write_char(empty) :- write('   ').
 write_char(b) :- write(' B ').
 write_char(r) :- write(' R ').
 write_char(division) :- write('|').
 
-player_piece(' R ', 1).
-player_piece(' B ',2).
 
+player_piece(Piece, Player):-
+    (
+        Player == 1 
+    ->  Piece = r
+    ;   Player == 2 
+    ->  Piece = b
+    ).
 
 
 % Predicate to display the board.
