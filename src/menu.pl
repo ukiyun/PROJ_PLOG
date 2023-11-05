@@ -27,6 +27,8 @@ menu_option(2):- print_how_to_play.
 
 % qual é a diferença entre o player vs bot e o bot vs player?
 
+% Player vs Player já leva o jogador para o jogo, e o Bot vs Player leva o jogador para o menu do bot, o resto ainda não está implementado
+
 print_play_menu:-
     nl,nl,nl,
     print(' ============================================ '), nl,
