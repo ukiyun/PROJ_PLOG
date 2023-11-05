@@ -1,4 +1,4 @@
-%:- consult('game.pl')
+:- consult('game.pl')
 :- consult('display.pl').
 :- consult('moves.pl').
 
@@ -15,17 +15,13 @@ print_menu :-
     print('|____________________________________________|'), nl,
     print('                                              '), nl.
 
-/*    initialBoard(Board),                      % commented out, to stop printing the board every time the menu is printed
-    sum_coords(Player, Board).
-  */  
-
 menu_option(3):- print_exit.
 menu_option(1):- play_menu.
 menu_option(2):- print_how_to_play.
 
 
 
-% qual é a diferença entre o player vs bot e o bot vs player?
+% qual é a diferença entre o player vs bot e o bot vs player? Quem começa a jogar primeiro i guess
 
 % Player vs Player já leva o jogador para o jogo, e o Bot vs Player leva o jogador para o menu do bot, o resto ainda não está implementado
 
@@ -91,7 +87,6 @@ print_how_to_play:-
     print('|         1 - Play          3 - Exit         |'), nl,
     print('|____________________________________________|'), nl,
     print('                                              '), nl,
-   % print_menu,                      % commented out, to stop printing the menu every time the how to play is printed
     read(Input),                                            
     menu_option(Input).                                     
                                                             
@@ -130,6 +125,11 @@ bot_menu :-
 
 start_game(1) :-
     initialBoard(Board),
+    nl,
+    print(' ____________________________________________ '), nl,
+    print('|                                            |'), nl,
+    print('|              RED PLAYERS TURN              |'), nl,
+    print('|____________________________________________|'),
     sum_coords(Player, Board).
 
 start_game_4(1) :-

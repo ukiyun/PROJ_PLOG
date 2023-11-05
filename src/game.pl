@@ -13,9 +13,11 @@ game_loop(Board, _, 24, _) :-
 
 game_loop(Board, Player, Round, Level) :-
     (Player == r
-    ->  print('|========================|\n'), nl,
-        print('|    RED PLAYERS TURN    |\n'), nl,
-        print('|========================|\n'), nl,
-        display_board(Board),
-        
-        )
+    ->  initialBoard(Board),
+        nl,
+        print(' ____________________________________________ '), nl,
+        print('|                                            |'), nl,
+        print('|              RED PLAYERS TURN              |'), nl,
+        print('|____________________________________________|'),
+        sum_coords(Player, Board).
+        ).

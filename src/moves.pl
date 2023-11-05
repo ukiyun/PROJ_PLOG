@@ -26,6 +26,7 @@ cards([
     [12, [[1,1], [-1,1], [-1,-1], [1,-1]]]
     ], 1).
 
+
 %blue cards
 cards([
     [1, [[4,2], [4,-2], [-4,2], [-4,-2], [2,4], [2,-4], [-2,4], [-2,-4]]],
@@ -97,22 +98,7 @@ display_card_numbers_aux([[Number, _] | Rest]) :-
 sum_coords(Player,Board) :-
     display_board(Board),
     cards(Cards,Player),
-    check_starting_position(Board, StartCol, StartRow, Player),
-
-    /*  
-        por alguma razão o StartRow e o StartCol estão a ser lidos como  _4427 e _4425
-        pode ser por causa do check_starting_position ou mesmo do checkRow e checkColumn
-        
-        
-        "StartCol, and StartRow are not instantiated or used further in your code, which may be why 
-        they appear as don't care variables (prefixed with underscores). 
-        It's a way for Prolog to indicate that these variables are not being used for any purpose.
-        If you intend to use these variables, make sure they are properly instantiated 
-        within the predicates and that their values are used. 
-        If you don't intend to use them, you can safely ignore the presence of the underscores."
-    
-
-    */
+    check_starting_position(Board, Column, Row, Player, ReturnRow, ReturnColumn),
     
     display_card_numbers(Cards),
 
@@ -120,19 +106,14 @@ sum_coords(Player,Board) :-
     write('Choose a card to use: \n'),
     read(Id),nl,
 
-    get_card_by_id(Id, Cards, Card),
-    write('That Cards Possible Moves:'),nl,
-    nl, write(Card),nl,
-
-    /*  Escreveste isto por alguma razão?
-    write(StartRow),nl,
-    write(StartCol),nl,
-    */
+    get_card_by_id(Id, Cards, Card), 
 
     nl, write('Final coords can be:'), nl,
-    nl, sum_coords_aux(Card, StartRow, StartCol), nl,
+    nl, sum_coords_aux(Card, ReturnRow, ReturnCol), nl,
 
-    write('Give me a option to rotate:'),read(Number),nl,
+    remove_card(Id, Cards, RemainingCards),
+
+    write('Select the desired coordinates: '),read(Number),nl,
     get_card_by_number(Number, Card, CardId),
     write(CardId),
     [X,Y] = CardId,
@@ -142,13 +123,15 @@ sum_coords(Player,Board) :-
     write(FinalCol),nl,
      
     % (Valid_move(...) -> alterar a lista (retirar a Card) ;  sum_coords(Id,Player)),
-
+    
     player_piece(Piece,Player),
 
     remove_piece(Board, StartRow, StartCol, TempBoard),
     change_cell(TempBoard, FinalRow, FinalCol, Piece, NewBoard),
 
     nl,nl,nl,nl,nl,
+
+    remove_card(Id, Cards, RemainingCards),
 
     (Player = 1 -> NextPlayer = 2 ; NextPlayer = 1),
     sum_coords(NextPlayer,NewBoard).
@@ -161,9 +144,13 @@ get_card_by_number(Number, Card,CardId) :-
 get_card_by_id(Id, [[Id, Coords] | _], Coords) :- !.
 get_card_by_id(Id, [_ | Tail], Coords) :-
     get_card_by_id(Id, Tail, Coords).
+    
+% remove_card(+CardId, +Cards, -RemainingCards)
+remove_card(CardId, Cards, RemainingCards) :-
+    select([CardId, _], Cards, RemainingCards).
 
 
-% NÃO ESTÁ A FUNCIONAR ALGUM ERRO NO SUM COORDS DE ARITMETICA
+% Já funciona
 %
 sum_coords_aux([], _, _).
 sum_coords_aux([[X, Y] | Tail], StartRow, StartCol) :-
@@ -172,13 +159,17 @@ sum_coords_aux([[X, Y] | Tail], StartRow, StartCol) :-
     write(NewSumX), write(' '), write(NewSumY),nl,
     sum_coords_aux(Tail, StartRow, StartCol).
     
+    % a cena de dar print as cartas no sicstus ainda nao funcemina
+    % como assim? Como é que eu dou run neste código? mas tipo os ficheiros nao estao guardados no meu pc
+    % da run ao codigo no sisctus, dá push no git e eu assim faço run
+    % escolhe o menu.pl e mete play. OKAPA
 
 % ======================================================= %
 
 % check the starting position of the piece
 
 % WORKING LETS FUCKING GOOOOOOOO
-check_starting_position(Board, Column, Row, Player) :-
+check_starting_position(Board, Column, Row, Player, ReturnRow, ReturnColumn) :-
     nl, write('Choose a piece to move: '),nl,
     write('\nColumn: '),
     checkColumn(ValidColumn, InputColumn),
@@ -196,8 +187,10 @@ check_starting_position(Board, Column, Row, Player) :-
 
             (Pieces == Player)->
             (
-                /* ValidRow = Row,
-                ValidColumn = Column,*/         % Declarações que estavam a turnar a Col e Row em booleans 
+                /*ValidRow = Row,
+                ValidColumn = Column, */         % Declarações que estavam a turnar a Col e Row em booleans 
+                ReturnColumn is InputColumn,
+                ReturnRow is InputRow,
                 write('\nYour turn to make a move!\n'), nl
             )
             ;
@@ -210,5 +203,7 @@ check_starting_position(Board, Column, Row, Player) :-
         check_starting_position(Board, Column, Row, Player)
     ).
 
+
+% ======================================================= %
 
 % ======================================================= %
