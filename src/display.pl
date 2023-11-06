@@ -191,6 +191,14 @@ display_players_turn(Player):-
     ).
 
 
+display_current_round(Round):-
+    nl,nl,
+    print(' ______________________ '), nl,
+    print('|                      |'), nl,
+    format('         ROUND ~d        ', [Round]), nl, 
+    print('|______________________|'),nl,nl.
+    
+
 display_winner(Winner):-
     (
         Winner == 1

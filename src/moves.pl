@@ -94,13 +94,22 @@ display_card_numbers_aux([[Number, _] | Rest]) :-
     sleep(0.4),
     display_card_numbers_aux(Rest).
 
-
 % ======================================================= %
 % Predicate to calculate the sum of the coordinates 
-sum_coords(Player,Board) :-
+game_loop(Player, Board, BlueCards, RedCards, Round) :-
+    (
+        Player = 1 
+    ->  Cards = BlueCards 
+    ;   Cards = RedCards
+    ),
+
+    (
+    Player == 1 -> display_current_round(Round)
+    ; true
+    ),
+
     display_players_turn(Player),
     display_board(Board),
-    cards(Cards,Player),
     check_starting_position(Board, Column, Row, Player, ReturnRow, ReturnColumn),
     
     display_card_numbers(Cards),
@@ -112,47 +121,36 @@ sum_coords(Player,Board) :-
     ;
         write('Invalid card number. Please select a valid card.\n'),
         sleep(3),
-        sum_coords(Player, Board) % Retry the turn
+        game_loop(Player, Board, BlueCards, RedCards, Round) % Retry the turn
     ), 
     % what if user does not want to use that card?
 
     get_card_by_id(Id, Cards, Card),
-    write('That Cards Possible Moves:'),nl,
-    nl, write(Card),nl,
 
     nl, write('Final coords can be:'), nl,nl,
     write(' Row   |   Col'),nl,
 
     initialize_indexes,
-    sum_coords_aux(Card, ReturnRow, ReturnColumn, List), nl,
+    sum_coords(Card, ReturnRow, ReturnColumn, List, Board), nl,
     list_indexes(List),
     reverse(List, FinalList), nl,
 
-    write(FinalList),
     write('Select the desired coordinates: '), read(Number),nl,
    
     nth1(Number, FinalList, FinalCoords),
-    write(FinalCoords),nl,
     [FinalRow, FinalColumn] = FinalCoords,
 
-
-    % (Valid_move(...) -> alterar a lista
-
     remove_card(Id, Cards, RemainingCards),
-    cards(RemainingCards, Player),
-    
-    player_piece(Piece,Player),
 
-    write(FinalRow),nl,
-    write(FinalColumn),nl,
+    player_piece(Piece,Player),
 
     remove_piece(Board, ReturnRow, ReturnColumn, TempBoard),
     change_cell(TempBoard, FinalRow, FinalColumn, Piece, NewBoard),
 
     nl,nl,nl,
 
-    (Player = 1 -> NextPlayer = 2 ; NextPlayer = 1),
-    sum_coords(NextPlayer,NewBoard).
+    (Player = 1 -> NextPlayer = 2; NextPlayer = 1, NextRound is Round + 1),
+    (Player = 1 -> game_loop(NextPlayer, NewBoard, RemainingCards, RedCards, Round); game_loop(NextPlayer, NewBoard, BlueCards, RemainingCards, NextRound)).
 
 get_card_by_number(Number, Card,CardId) :-
     nth1(Number, Card, CardId).
@@ -165,27 +163,27 @@ get_card_by_id(Id, [_ | Tail], Coords) :-
     
 % remove_card(+CardId, +Cards, -RemainingCards)
 remove_card(_, [], []).
-remove_card(Elem, [Elem|T], T).
-remove_card(Elem, [H|T], [H|Result]):-
-    Elem \= H,
-    remove_card(Elem, T, Result),
-    write(Result).
-% e se transformar a lista de cartas numa lista de listas como a que usei para as coordenadas?
-% tenta dar print para ver se ele está a remover a carta
+remove_card(Id, [[Id, _] | Tail], RemainingCards) :-
+    !, remove_card(Id, Tail, RemainingCards).
+remove_card(Id, [Card | Tail], [Card | RemainingCards]) :-
+    remove_card(Id, Tail, RemainingCards).
 
 
-sum_coords_aux([], _, _,_).
-sum_coords_aux([[X, Y] | Tail], StartRow, StartCol, Indexs) :-
+
+sum_coords([], _, _,_, _).
+sum_coords([[X, Y] | Tail], StartRow, StartCol, Indexs, Board) :-
     NewSumX is StartRow + X,
-    NewSumY is StartCol + Y,
+    NewSumY is StartCol + Y,  
+
     (
-        (NewSumX > 0, NewSumX =< 8, NewSumY > 0, NewSumY =< 8)
+        (isEmpty(Board, NewSumX, NewSumY), NewSumX > 0, NewSumX =< 8, NewSumY > 0, NewSumY =< 8)
     ->  write('    [ '), write(NewSumX), write(', '), write(NewSumY), write(']'),nl,
         Coordinates = [NewSumX,NewSumY],
         add_to_list(Coordinates)
     ;   true 
     ),
-    sum_coords_aux(Tail, StartRow, StartCol, ValidIndexes).
+
+    sum_coords(Tail, StartRow, StartCol, ValidIndexes, Board).
 
 
 % ======================================================= %

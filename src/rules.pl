@@ -90,10 +90,6 @@ getColumn(Board, ColumnNum, FinalColumn):-
 % Verify is there is a piece on the desired position
 % checkDestinationPiece(+NewRow, +NewColumn, -IsValid)
 
-/*checkDestinationPiece(NewRow, NewColumn, 'True') :-
-    NewRow > 0, NewRow =< 8, NewColumn > 0, NewColumn =< 8.
-checkDestinationPiece(_, _, 'False').*/
-
 % ======================================================= %
 
 % Check if there is a piece between the original and destination positions
@@ -329,6 +325,11 @@ incrementTurn(turns, X) :-
 
 % ======================================================= %
 
+isEmpty(Board, Row, Column) :-
+    nth1(Row, Board, RowList),
+    nth1(Column, RowList, Value),
+    Value == empty.
+
 % ===================== BOARD ITERATION ========================= %
 
 
@@ -455,7 +456,7 @@ start_new_round :-
 
 /*
 
-At the end of sum_coords do
+At the end of game_loop do
 incrementRoundCount
 
 then get_round_count(Round)

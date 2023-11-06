@@ -1,4 +1,4 @@
-:- consult('game.pl')
+:- consult('game.pl').
 :- consult('display.pl').
 :- consult('moves.pl').
 
@@ -122,10 +122,6 @@ bot_menu :-
     print_bot_menu,
     read(Input),
     ai_option(Input).
-
-start_game(1) :-
-    initialBoard(Board),nl,
-    sum_coords(1, Board).
 
 start_game_4(1) :-
     bot_menu.
