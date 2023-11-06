@@ -92,13 +92,13 @@ Group Traxit_1
 
 ### Cards
 
-- Each Player has 2 pawns and a total of 16 different path tiles.
+- Each Player has 2 pawns and a total of 12 different path tiles.
 - These tiles are unique and you can rotate the path as freely as you'd like.
 - After using a Path, the corresponded tile is discarded.
 
 ### Score & Rounds 
 
-- There are a total of 16 rounds and at the end of every 4 rounds (4, 8, 12, 16) you score points based on the position of both your pawns.
+- There are a total of 12 rounds and at the end of every 4 rounds (4, 8, 12) you score points based on the position of both your pawns.
 
 - You can't move outside the board, and if you can't move at all, the opponent takes one of your pawns and moves it to the lowest level. This move is called a ***Traxit***, which is the latin word for being pulled.
 

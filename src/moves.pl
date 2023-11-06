@@ -98,6 +98,7 @@ display_card_numbers_aux([[Number, _] | Rest]) :-
 % ======================================================= %
 % Predicate to calculate the sum of the coordinates 
 sum_coords(Player,Board) :-
+    display_players_turn(Player),
     display_board(Board),
     cards(Cards,Player),
     check_starting_position(Board, Column, Row, Player, ReturnRow, ReturnColumn),
@@ -127,7 +128,7 @@ sum_coords(Player,Board) :-
     list_indexes(List),
     reverse(List, FinalList), nl,
 
-
+    write(FinalList),
     write('Select the desired coordinates: '), read(Number),nl,
    
     nth1(Number, FinalList, FinalCoords),
@@ -138,6 +139,7 @@ sum_coords(Player,Board) :-
     % (Valid_move(...) -> alterar a lista
 
     remove_card(Id, Cards, RemainingCards),
+    cards(RemainingCards, Player),
     
     player_piece(Piece,Player),
 
@@ -162,8 +164,14 @@ get_card_by_id(Id, [_ | Tail], Coords) :-
     get_card_by_id(Id, Tail, Coords).
     
 % remove_card(+CardId, +Cards, -RemainingCards)
-remove_card(CardId, Cards, RemainingCards) :-
-    select([CardId, _], Cards, RemainingCards).
+remove_card(_, [], []).
+remove_card(Elem, [Elem|T], T).
+remove_card(Elem, [H|T], [H|Result]):-
+    Elem \= H,
+    remove_card(Elem, T, Result),
+    write(Result).
+% e se transformar a lista de cartas numa lista de listas como a que usei para as coordenadas?
+% tenta dar print para ver se ele está a remover a carta
 
 
 sum_coords_aux([], _, _,_).
@@ -183,11 +191,15 @@ sum_coords_aux([[X, Y] | Tail], StartRow, StartCol, Indexs) :-
 % ======================================================= %
 
 initialize_indexes :-
-    assert(list_indexes([])).
+    reset_list.
 
 add_to_list(X) :-
     retract(list_indexes(List)),
     assert(list_indexes([X | List])).
+
+reset_list :-
+    retractall(list_indexes(_)),
+    assertz(list_indexes([])).
 
 
 % ======================================================= %

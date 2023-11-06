@@ -312,19 +312,17 @@ incrementTurn(turns, X) :-
         ;  CurrentTurn =:= 8
         ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
         ;  CurrentTurn =:= 12
-        ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
-        ;  CurrentTurn =:= 16
         ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue),
             total_score(NewPointsListRed, NewPointsListBlue, ScoreRed, ScoreBlue),
             write("Red Score: "), write(ScoreRed), nl,
             write("Blue Score: "), write(ScoreBlue), nl,
             (
                 ScoreRed > ScoreBlue
-                ->  write("Red Wins!"), nl
+                ->  display_winner(1)
                 ; ScoreBlue > ScoreRed
-                ->  write("Blue Wins!"), nl
+                ->  display_winner(2)
                 ; ScoreRed == ScoreBlue
-                ->  write("It's a tie!"), nl
+                ->  display_winner(3)
             )
     ).
 
@@ -433,5 +431,54 @@ checkPositionPoints(Row, Column, Points) :-
 total_score(PointsListRed, PointsListBlue, ScoreRed, ScoreBlue):-
     sum_list(PointsListRed, ScoreRed),
     sum_list(PointsListBlue, ScoreBlue).
+
+% ======================================================= %
+
+
+% ===================== SIMPLER TURN COUNTER ========================= %
+
+:- dynamic (roundCount/1).  % initialize the round count to 1
+roundCount(1).
+
+incrementRoundCount :-
+    retract(roundCount(X)),
+    NewCount is X + 1,
+    assert(roundCount(NewCount)).
+
+get_round_count(Round) :-
+    roundCount(Round).
+
+start_new_round :-
+    retract(roundCount(_)),
+    assert(roundCount(1)).
+
+
+/*
+
+At the end of sum_coords do
+incrementRoundCount
+
+then get_round_count(Round)
+    (
+        Round == 4
+        ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+        ;  Round == 8
+        ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue)
+        ;  Round == 12
+        ->  iterateBoard(Board, FirstRow, FirstColumn, Occupation, PointsListRed, NewPointsListRed, PointsListBlue, NewPointsListBlue),
+            total_score(NewPointsListRed, NewPointsListBlue, ScoreRed, ScoreBlue),
+            write("Red Score: "), write(ScoreRed), nl,
+            write("Blue Score: "), write(ScoreBlue), nl,
+            (
+                ScoreRed > ScoreBlue
+                ->  display_winner(1)
+                ; ScoreBlue > ScoreRed
+                ->  display_winner(2)
+                ; ScoreRed == ScoreBlue
+                ->  display_winner(3)
+            )    
+    )
+*/
+
 
 % ======================================================= %

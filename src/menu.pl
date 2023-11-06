@@ -124,13 +124,8 @@ bot_menu :-
     ai_option(Input).
 
 start_game(1) :-
-    initialBoard(Board),
-    nl,
-    print(' ____________________________________________ '), nl,
-    print('|                                            |'), nl,
-    print('|              RED PLAYERS TURN              |'), nl,
-    print('|____________________________________________|'),
-    sum_coords(Player, Board).
+    initialBoard(Board),nl,
+    sum_coords(1, Board).
 
 start_game_4(1) :-
     bot_menu.
